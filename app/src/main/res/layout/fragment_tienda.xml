@@ -10,11 +10,35 @@
         android:id="@+id/imageView"
         android:layout_width="114dp"
         android:layout_height="107dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="28dp"
         android:src="@drawable/gatoperro"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="408dp"
+        android:layout_height="525dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:context=".RegisterActivity">
+
+        <RelativeLayout
+            android:id="@+id/listaTienda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@color/white">
+
+
+            <!-- AQUI SE AÑADEN LOS PRODUCTOS CON CODIGO -->
+
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

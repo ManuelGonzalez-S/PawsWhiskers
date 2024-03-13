@@ -43,5 +43,10 @@ class ProductoRepositorio {
             }
         }
 
+        fun obtenerProducto(nombre: String): Producto? {
+            val producto = listaProductos.find { it.nombre == nombre }
+            return producto
+        }
+
     }
 }

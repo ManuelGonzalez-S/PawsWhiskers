@@ -14,9 +14,11 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.bumptech.glide.Glide
+import com.example.pawswhiskers.Modelo.Producto
 import com.example.pawswhiskers.Repositorio.ListaCompra
 import com.example.pawswhiskers.Repositorio.ProductoRepositorio
 import com.google.firebase.Firebase
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
 
 class Carrito : AppCompatActivity() {
@@ -24,9 +26,25 @@ class Carrito : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_carrito)
 
+        findViewById<Button>(R.id.btnVolver).setOnClickListener {
+            onBackPressed()
+        }
+
         val containerLayout = findViewById<LinearLayout>(R.id.containerLayout)
 
+        // Mapa que mapea el nombre del producto a su cantidad en el carrito
+        val listaProductos = mutableMapOf<String, Int>()
+
+        // Llenar el mapa con los productos de la lista de compra
         for (producto in ListaCompra.obtenerProductos()) {
+            // Incrementar la cantidad del producto en el mapa
+            val nombre = producto.nombre ?: "Nombre Desconocido"
+            listaProductos[nombre] = (listaProductos[nombre] ?: 0) + 1
+        }
+
+        // Recorrer el mapa para crear vistas de productos en el carrito
+        for ((nombre, cantidad) in listaProductos) {
+            // Crear vista del producto
             val itemView = layoutInflater.inflate(R.layout.carrito_producto, containerLayout, false)
 
             // Buscar los elementos de la vista del producto
@@ -39,66 +57,58 @@ class Carrito : AppCompatActivity() {
             val btnRestarCantidad = itemView.findViewById<TextView>(R.id.buttonResta)
 
             // Actualizar los datos de la vista del producto con los datos del producto actual
-            cargarImagen(this, producto.refFoto, imageViewProducto)
-            textViewNombre.text = producto.nombre
-            textViewPrecio.text = producto.precio
+            cargarImagen(this, ProductoRepositorio.obtenerProducto(nombre)?.refFoto, imageViewProducto)
+            textViewNombre.text = nombre
+            textViewPrecio.text = ProductoRepositorio.obtenerProducto(nombre)?.precio ?: "Precio Desconocido"
+            txtCantidad.text = cantidad.toString()
+
+            if(cantidad == 1){
+                btnRestarCantidad.isEnabled = false
+            }
 
             // Agregar la vista del producto al contenedor
             containerLayout.addView(itemView)
 
-            if(txtCantidad.text.toString().toInt() == 1){
-                btnRestarCantidad.isEnabled = false
-            }
-
             // Asignar una función al botón de eliminar
             btnEliminar.setOnClickListener {
-
-                ListaCompra.eliminarProducto(producto)
-
-                // Eliminar la vista del producto del contenedor
-                containerLayout.removeView(itemView)
-
-                // Solicitar un nuevo diseño para el contenedor
-                containerLayout.requestLayout()
+                // Reducir la cantidad del producto en el mapa
+                val nuevaCantidad = cantidad - 1
+                if (nuevaCantidad > 0) {
+                    listaProductos[nombre] = nuevaCantidad
+                    txtCantidad.text = nuevaCantidad.toString()
+                } else {
+                    // Si la cantidad llega a cero, eliminar el producto del mapa y del carrito
+                    listaProductos.remove(nombre)
+                    containerLayout.removeView(itemView)
+                }
             }
 
             btnSumarCantidad.setOnClickListener {
-
+                // Incrementar la cantidad del producto en el mapa y en la vista
                 var cantidad = txtCantidad.text.toString().toInt()
+                val nuevaCantidad = cantidad + 1
 
-                cantidad++
-
-                txtCantidad.text = cantidad.toString()
+                listaProductos[nombre] = nuevaCantidad
+                txtCantidad.text = nuevaCantidad.toString()
 
                 btnRestarCantidad.isEnabled = true
-
             }
 
             btnRestarCantidad.setOnClickListener {
-
+                // Reducir la cantidad del producto en el mapa y en la vista
                 var cantidad = txtCantidad.text.toString().toInt()
+                val nuevaCantidad = cantidad - 1
 
-                cantidad--
+                listaProductos[nombre] = nuevaCantidad
+                txtCantidad.text = nuevaCantidad.toString()
 
-                txtCantidad.text = cantidad.toString()
-
-                if(cantidad == 1){
+                if (nuevaCantidad == 1) {
                     btnRestarCantidad.isEnabled = false
-                }
+                }else{
 
+                }
             }
         }
-
-
-    }
-
-    private fun getTotalHeight(viewGroup: ViewGroup): Int {
-        var totalHeight = 0
-        for (i in 0 until viewGroup.childCount) {
-            val child = viewGroup.getChildAt(i)
-            totalHeight += child.height
-        }
-        return totalHeight
     }
 
     private fun cargarImagen(context: Context, nombreImagen: String?, imageView: ImageView) {
@@ -107,13 +117,14 @@ class Carrito : AppCompatActivity() {
 
         // Cargar la imagen desde Firebase Storage utilizando Glide si el nombre de la imagen no es nulo
         nombreImagen?.let { imageName ->
-            storageRef.child(imageName).downloadUrl.addOnSuccessListener { uri ->
+            val imageRef: StorageReference = storageRef.child(imageName)
+            imageRef.downloadUrl.addOnSuccessListener { uri ->
                 // Cargar la imagen en el ImageView usando Glide
                 Glide.with(context)
                     .load(uri)
                     .into(imageView)
             }.addOnFailureListener { exception ->
-                //Manej ode errores
+                //Manejo de errores
                 exception.printStackTrace()
             }
         }

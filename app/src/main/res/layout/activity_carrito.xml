@@ -6,14 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".Carrito">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/btnVolver"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="36dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        android:background="@drawable/fondo_circulo"
+        android:contentDescription="Botón volver atrás"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/volver"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -21,13 +24,13 @@
         android:id="@+id/scrollView"
         android:layout_width="409dp"
         android:layout_height="435dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="60dp"
         android:clipToPadding="false"
         android:contentDescription="Lista de productos"
         android:paddingBottom="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button">
+        app:layout_constraintTop_toBottomOf="@+id/btnVolver">
 
         <LinearLayout
             android:id="@+id/containerLayout"

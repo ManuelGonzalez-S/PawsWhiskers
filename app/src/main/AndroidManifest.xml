@@ -15,6 +15,12 @@
         android:theme="@style/Theme.PawsWhiskers"
         tools:targetApi="31">
         <activity
+            android:name=".Carrito"
+            android:exported="false" />
+        <activity
+            android:name=".ui.Carrito.CarritoFragment"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name">

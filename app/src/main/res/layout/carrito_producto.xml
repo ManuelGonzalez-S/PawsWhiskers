@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="40dp"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Contenedor para la información del producto -->
+        <LinearLayout
+            android:id="@+id/linearLayoutInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageViewProducto"
+                android:layout_width="100dp"
+                android:layout_height="150dp"
+                android:maxHeight="150dp"
+                android:maxWidth="100dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/gatoperro" />
+
+            <TextView
+                android:id="@+id/textViewNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Nombre del producto"
+                android:textSize="@dimen/tamañoLetraTienda" />
+
+            <TextView
+                android:id="@+id/textViewPrecio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Precio del producto"
+                android:textSize="@dimen/tamañoLetraTienda" />
+
+        </LinearLayout>
+
+        <!-- Contenedor para los botones de operaciones -->
+        <LinearLayout
+            android:id="@+id/linearLayoutOperaciones"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- Contenedor para los botones de suma, resta y cantidad -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/buttonResta"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="-" />
+
+                <TextView
+                    android:id="@+id/txtCantidadCesta"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/borde"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:layout_margin="5dp"
+                    android:text="1" />
+
+                <Button
+                    android:id="@+id/buttonSuma"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="+" />
+
+            </LinearLayout>
+
+            <!-- Botón para eliminar -->
+            <ImageButton
+                android:id="@+id/btnEliminar"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rectangulo_redondeado"
+                android:maxHeight="150dp"
+                android:maxWidth="100dp"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/basura" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

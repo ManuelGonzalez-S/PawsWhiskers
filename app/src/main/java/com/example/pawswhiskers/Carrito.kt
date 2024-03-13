@@ -1,8 +1,10 @@
 package com.example.pawswhiskers
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -17,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.example.pawswhiskers.Modelo.Producto
 import com.example.pawswhiskers.Repositorio.ListaCompra
 import com.example.pawswhiskers.Repositorio.ProductoRepositorio
+import com.example.pawswhiskers.ui.tienda.TiendaFragment
 import com.google.firebase.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
@@ -26,7 +29,7 @@ class Carrito : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_carrito)
 
-        findViewById<Button>(R.id.btnVolver).setOnClickListener {
+        findViewById<ImageButton>(R.id.btnVolver).setOnClickListener {
             onBackPressed()
         }
 
@@ -69,17 +72,36 @@ class Carrito : AppCompatActivity() {
             // Agregar la vista del producto al contenedor
             containerLayout.addView(itemView)
 
-            // Asignar una función al botón de eliminar
             btnEliminar.setOnClickListener {
-                // Reducir la cantidad del producto en el mapa
-                val nuevaCantidad = cantidad - 1
-                if (nuevaCantidad > 0) {
-                    listaProductos[nombre] = nuevaCantidad
-                    txtCantidad.text = nuevaCantidad.toString()
-                } else {
-                    // Si la cantidad llega a cero, eliminar el producto del mapa y del carrito
-                    listaProductos.remove(nombre)
-                    containerLayout.removeView(itemView)
+                // Obtener el nombre del producto de la vista actual
+                val nombreProducto = textViewNombre.text.toString()
+
+                // Crear una lista para almacenar los productos a eliminar
+                val productosAEliminar = mutableListOf<Producto>()
+
+                // Recorrer todos los productos en la lista de compra
+                for (producto in ListaCompra.obtenerProductos()) {
+                    // Si el nombre del producto coincide con el nombre del producto en la vista actual
+                    if (producto.nombre.equals(nombreProducto, ignoreCase = true)) {
+                        // Agregar el producto a la lista de productos a eliminar
+                        productosAEliminar.add(producto)
+                    }
+                }
+
+                // Eliminar los productos de la lista de compra
+                for (producto in productosAEliminar) {
+                    ListaCompra.eliminarProducto(producto)
+                }
+
+                // Eliminar la vista del producto del contenedor
+                containerLayout.removeView(itemView)
+
+                // Solicitar un nuevo diseño para el contenedor
+                containerLayout.requestLayout()
+
+                // Si la lista de productos está vacía, cerrar la actividad del carrito
+                if (ListaCompra.obtenerProductos().isEmpty()) {
+                    onBackPressed()
                 }
             }
 
@@ -91,6 +113,17 @@ class Carrito : AppCompatActivity() {
                 listaProductos[nombre] = nuevaCantidad
                 txtCantidad.text = nuevaCantidad.toString()
 
+                Log.e(TAG, "\nAntes de borrar")
+
+                ListaCompra.mostrarProductos()
+
+                ProductoRepositorio.obtenerProducto(textViewNombre.text.toString())
+                    ?.let { it1 -> ListaCompra.añadirProducto(it1) }
+
+                ListaCompra.mostrarProductos()
+
+                Log.e(TAG, "\nDespues de borrar")
+
                 btnRestarCantidad.isEnabled = true
             }
 
@@ -101,6 +134,17 @@ class Carrito : AppCompatActivity() {
 
                 listaProductos[nombre] = nuevaCantidad
                 txtCantidad.text = nuevaCantidad.toString()
+
+                Log.e(TAG, "\nAntes de borrar")
+
+                ListaCompra.mostrarProductos()
+
+                ProductoRepositorio.obtenerProducto(textViewNombre.text.toString())
+                    ?.let { it1 -> ListaCompra.eliminarProducto(it1) }
+
+                ListaCompra.mostrarProductos()
+
+                Log.e(TAG, "\nDespues de borrar")
 
                 if (nuevaCantidad == 1) {
                     btnRestarCantidad.isEnabled = false

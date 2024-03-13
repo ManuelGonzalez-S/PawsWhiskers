@@ -97,15 +97,18 @@
             <!-- Botón para eliminar -->
             <ImageButton
                 android:id="@+id/btnEliminar"
-                android:layout_width="match_parent"
-                android:layout_height="65dp"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/rectangulo_redondeado"
-                android:maxHeight="150dp"
-                android:maxWidth="100dp"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/basura" />
+                android:src="@drawable/basura"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
         </LinearLayout>
     </LinearLayout>

@@ -6,30 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".ui.informacion.InformacionFragment">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="114dp"
-        android:layout_height="107dp"
-        android:layout_marginTop="4dp"
-        android:src="@drawable/gatoperro"
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:paddingBottom="50dp"
+        android:text="Nuestra tienda"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="@dimen/tamañoLetraTienda"/>
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="412dp"
         android:layout_height="444dp"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
         app:layout_constraintVertical_bias="0.092"
-        tools:context=".RegisterActivity"
-        android:clipToPadding="false"
-        android:paddingBottom="100dp">
+        tools:context=".RegisterActivity">
 
         <RelativeLayout
             android:id="@+id/listaTienda"
@@ -45,5 +47,16 @@
         </RelativeLayout>
 
     </ScrollView>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="28dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/cestacompraanimada"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.722"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

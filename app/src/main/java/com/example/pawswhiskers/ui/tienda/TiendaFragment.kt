@@ -2,30 +2,19 @@ package com.example.pawswhiskers.ui.tienda
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.example.pawswhiskers.Modelo.Producto
-import com.example.pawswhiskers.R
 import com.example.pawswhiskers.Repositorio.ProductoRepositorio
 import com.example.pawswhiskers.databinding.FragmentTiendaBinding
 import com.google.firebase.Firebase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.storage
+
 
 class TiendaFragment : Fragment() {
 
@@ -42,6 +31,10 @@ class TiendaFragment : Fragment() {
 
         _binding = FragmentTiendaBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        val imageView: ImageView = binding.imageView
+
+        Glide.with(this).load(com.example.pawswhiskers.R.drawable.cestacompra).into(imageView)
 
         return root
     }
@@ -97,12 +90,12 @@ class TiendaFragment : Fragment() {
         var previousItemId = View.NO_ID
         //Bucle forEach
         for ((index, producto) in ProductoRepositorio.obtenerProductos().withIndex()) {
-            val itemView = layoutInflater.inflate(R.layout.item_producto, listaTienda, false)
+            val itemView = layoutInflater.inflate(com.example.pawswhiskers.R.layout.item_producto, listaTienda, false)
 
             //Coge los campos dentro de la plantilla de los productos (item_producto.xml)
-            val imageViewProducto = itemView.findViewById<ImageView>(R.id.imageViewProducto)
-            val textViewNombre = itemView.findViewById<TextView>(R.id.textViewNombre)
-            val textViewPrecio = itemView.findViewById<TextView>(R.id.textViewPrecio)
+            val imageViewProducto = itemView.findViewById<ImageView>(com.example.pawswhiskers.R.id.imageViewProducto)
+            val textViewNombre = itemView.findViewById<TextView>(com.example.pawswhiskers.R.id.textViewNombre)
+            val textViewPrecio = itemView.findViewById<TextView>(com.example.pawswhiskers.R.id.textViewPrecio)
 
             //Carga la imagen segun refFoto en el producto
             cargarImagen(requireContext(), producto.refFoto, imageViewProducto)
@@ -116,7 +109,7 @@ class TiendaFragment : Fragment() {
                 ConstraintLayout.LayoutParams.WRAP_CONTENT
             )
             //Hace un espacio entre medias de los productos para que no se superpongan
-            layoutParams.topMargin = resources.getDimensionPixelSize(R.dimen.margin_between_items) * index
+            layoutParams.topMargin = resources.getDimensionPixelSize(com.example.pawswhiskers.R.dimen.margin_between_items) * index
             itemView.layoutParams = layoutParams
 
             if (previousItemId != View.NO_ID) {

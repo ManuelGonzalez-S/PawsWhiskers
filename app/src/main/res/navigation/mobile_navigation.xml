@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
+    <!-- app:startDestination="@+id/navigation_dashboard para que empiece en la tienda" -->
 
     <fragment
         android:id="@+id/navigation_home"
@@ -13,7 +14,7 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.pawswhiskers.ui.tienda.TiendaFragment"
-        tools:layout="@layout/fragment_informacion" />
+        tools:layout="@layout/fragment_user" />
 
     <fragment
         android:id="@+id/navigation_notifications"

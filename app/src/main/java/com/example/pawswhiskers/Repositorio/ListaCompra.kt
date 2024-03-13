@@ -2,38 +2,37 @@ package com.example.pawswhiskers.Repositorio
 
 import com.example.pawswhiskers.Modelo.Producto
 
-class ProductoRepositorio {
+class ListaCompra {
 
-    companion object {
+    companion object{
 
         private val listaProductos: ArrayList<Producto> = ArrayList()
 
-        // Agrega un producto a la lista
-        fun agregarProducto(producto: Producto) {
-            listaProductos.add(producto)
+        fun añadirProducto(producto: Producto) {
+            ListaCompra.listaProductos.add(producto)
         }
 
         // Elimina un producto de la lista
         fun eliminarProducto(producto: Producto) {
-            listaProductos.remove(producto)
+            ListaCompra.listaProductos.remove(producto)
         }
 
         // Obtiene todos los productos de la lista
         fun obtenerProductos(): ArrayList<Producto> {
-            return listaProductos
+            return ListaCompra.listaProductos
         }
 
-        // Limpia la lista de productos
-        fun limpiarProductos() {
-            listaProductos.clear()
+        //Vacia la lista de productos
+        fun vaciarLista() {
+            ListaCompra.listaProductos.clear()
         }
 
         fun mostrarProductos() {
-            if (listaProductos.isEmpty()) {
+            if (ListaCompra.listaProductos.isEmpty()) {
                 println("No hay productos en el repositorio.")
             } else {
                 println("Productos en el repositorio:")
-                for ((index, producto) in listaProductos.withIndex()) {
+                for ((index, producto) in ListaCompra.listaProductos.withIndex()) {
                     println("Producto ${index + 1}:")
                     println("Nombre: ${producto.nombre}")
                     println("Precio: ${producto.precio}")
@@ -44,4 +43,5 @@ class ProductoRepositorio {
         }
 
     }
+
 }

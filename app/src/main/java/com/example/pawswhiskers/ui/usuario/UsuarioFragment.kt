@@ -260,7 +260,7 @@ class UsuarioFragment : Fragment() {
             binding.btnCambiarVista.visibility = View.GONE
 
             binding.btnLogOut.visibility = View.VISIBLE
-            cargarImagen("cloud.jpg")
+            cargarImagen("perfil.png")
             binding.txtCorreoUsuario.text = Firebase.auth.currentUser?.email.toString().substringBefore('@')
             binding.imageView2.visibility = View.VISIBLE
             binding.txtCorreoUsuario.visibility = View.VISIBLE

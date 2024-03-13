@@ -4,7 +4,6 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,14 +13,17 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.pawswhiskers.Carrito
-import com.example.pawswhiskers.R
 import com.example.pawswhiskers.Repositorio.ListaCompra
 import com.example.pawswhiskers.Repositorio.ProductoRepositorio
 import com.example.pawswhiskers.databinding.FragmentTiendaBinding
 import com.google.firebase.Firebase
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.database
 import com.google.firebase.storage.storage
 
 
@@ -31,6 +33,7 @@ class TiendaFragment : Fragment() {
     private var _binding: FragmentTiendaBinding? = null
 
     private val binding get() = _binding!!
+    private lateinit var  database: DatabaseReference
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +41,7 @@ class TiendaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        database = Firebase.database.reference
         _binding = FragmentTiendaBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -53,12 +57,11 @@ class TiendaFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        actualizarVistaTienda()
+        comprobarListaCesta()
     }
 
+    /*
     private fun actualizarVistaTienda() {
-        // Eliminar todos los elementos de la listaTienda
-        binding.listaTienda.removeAllViews()
 
         val listaTienda = binding.listaTienda
 
@@ -94,13 +97,47 @@ class TiendaFragment : Fragment() {
                 layoutParams.topToBottom = previousItemId
             }
 
-            // Buscar el botón "Añadir a la cesta" en el diseño del producto
             val btnAddToCart = itemView.findViewById<Button>(com.example.pawswhiskers.R.id.btnAddToCart)
 
+            if(ListaCompra.obtenerProductos().contains(producto)){
+                // Primero establece el texto del botón
+                btnAddToCart.text = "En tu cesta"
+                // Luego establece el color de fondo y el color del texto
+                btnAddToCart.setBackgroundColor(Color.CYAN)
+                btnAddToCart.setTextColor(Color.BLACK)
+            }else{
+                // Primero establece el texto del botón
+                btnAddToCart.text = "Añadir a la cesta"
+                // Luego establece el color de fondo y el color del texto
+                btnAddToCart.setBackgroundColor(Color.BLUE)
+                btnAddToCart.setTextColor(Color.WHITE)
+            }
+
+            btnAddToCart.setBackgroundColor(Color.BLUE)
             // Configurar el OnClickListener para el botón
             btnAddToCart.setOnClickListener {
                 // Añadir el producto a la cesta
-                ListaCompra.añadirProducto(producto)
+                if (btnAddToCart.text.toString().equals("Añadir a la cesta")) {
+
+                    ListaCompra.añadirProducto(producto)
+
+                    Log.e(TAG, "PUEROOOOOOOOOOOOO")
+
+                    // Primero establece el texto del botón
+                    btnAddToCart.text = "En tu cesta"
+                    // Luego establece el color de fondo y el color del texto
+                    btnAddToCart.setBackgroundColor(Color.CYAN)
+                    btnAddToCart.setTextColor(Color.BLACK)
+
+                } else {
+                    ListaCompra.eliminarProducto(producto)
+
+                    // Primero establece el texto del botón
+                    btnAddToCart.text = "Añadir a la cesta"
+                    // Luego establece el color de fondo y el color del texto
+                    btnAddToCart.setBackgroundColor(Color.BLUE)
+                    btnAddToCart.setTextColor(Color.WHITE)
+                }
 
                 comprobarListaCesta()
             }
@@ -119,10 +156,10 @@ class TiendaFragment : Fragment() {
 
         comprobarListaCesta()
     }
+    */
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         //Ahora se guardan en MainActivity cuando se inicializa la aplicacion
 
@@ -200,33 +237,47 @@ class TiendaFragment : Fragment() {
             // Buscar el botón "Añadir a la cesta" en el diseño del producto
             val btnAddToCart = itemView.findViewById<Button>(com.example.pawswhiskers.R.id.btnAddToCart)
 
+            if(ListaCompra.obtenerProductos().contains(producto)){
+                btnAddToCart.text = "En tu cesta"
+                // Luego establece el color de fondo y el color del texto
+                btnAddToCart.setBackgroundColor(Color.CYAN)
+                btnAddToCart.setTextColor(Color.BLACK)
+            }else{
+                btnAddToCart.text = "Añadir a la cesta"
+                // Luego establece el color de fondo y el color del texto
+                btnAddToCart.setBackgroundColor(Color.BLUE)
+                btnAddToCart.setTextColor(Color.WHITE)
+            }
+
             btnAddToCart.setBackgroundColor(Color.BLUE)
             // Configurar el OnClickListener para el botón
             btnAddToCart.setOnClickListener {
                 // Añadir el producto a la cesta
-                if (btnAddToCart.text == "Añadir a la cesta") {
+                if (btnAddToCart.text.toString().equals("Añadir a la cesta")) {
+
                     ListaCompra.añadirProducto(producto)
 
+                    Log.e(TAG, "PUEROOOOOOOOOOOOO")
+
+                    // Primero establece el texto del botón
+                    btnAddToCart.text = "En tu cesta"
+                    // Luego establece el color de fondo y el color del texto
                     btnAddToCart.setBackgroundColor(Color.CYAN)
                     btnAddToCart.setTextColor(Color.BLACK)
-                    btnAddToCart.setText("En tu cesta")
+
                 } else {
                     ListaCompra.eliminarProducto(producto)
 
+                    // Primero establece el texto del botón
+                    btnAddToCart.text = "Añadir a la cesta"
+                    // Luego establece el color de fondo y el color del texto
                     btnAddToCart.setBackgroundColor(Color.BLUE)
                     btnAddToCart.setTextColor(Color.WHITE)
-                    btnAddToCart.setText("Añadir a la cesta")
                 }
-
-                /*
-                val producto = database.child("Relaciones").child("Productos")
-                val productoReferencia = producto.push()
-                val nombreProducto = productoReferencia.key
-                writeProduct(nombreProducto.toString(), Firebase.auth.currentUser?.uid.toString(), 1)
-                */
 
                 comprobarListaCesta()
             }
+
 
             // Agregar el elemento de lista a la listaTienda
             listaTienda.addView(itemView)

@@ -26,6 +26,7 @@
         android:clipToPadding="false"
         android:paddingBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="Lista de productos"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,15 +49,42 @@
 
     </ScrollView>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="28dp"
-        android:layout_height="26dp"
+    <ImageButton
+        android:id="@+id/myImageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/cestacompraanimada"
+        android:background="@drawable/fondo_circulo"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="Botón de cesta de compra"
+        android:src="@drawable/cestacomprafoto"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.722"
         app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/circuloConTexto"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginBottom="35dp"
+        android:src="@drawable/circulito_texto"
+        app:layout_constraintBottom_toBottomOf="@+id/myImageButton"
+        app:layout_constraintStart_toStartOf="@+id/myImageButton" />
+
+    <TextView
+        android:id="@+id/txtCantidadTienda"
+        android:layout_width="25dp"
+        android:layout_height="26dp"
+        android:gravity="center"
+        android:text="1"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/circuloConTexto"
+        app:layout_constraintEnd_toEndOf="@+id/circuloConTexto"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/circuloConTexto"
+        app:layout_constraintTop_toTopOf="@+id/circuloConTexto" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

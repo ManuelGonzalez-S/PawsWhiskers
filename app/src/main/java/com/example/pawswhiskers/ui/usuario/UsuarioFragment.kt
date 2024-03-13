@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.pawswhiskers.databinding.FragmentUserBinding
@@ -26,6 +27,8 @@ class UsuarioFragment : Fragment() {
 
     private lateinit var database: DatabaseReference
 
+    // This property is only valid between onCreateView and
+    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -39,7 +42,12 @@ class UsuarioFragment : Fragment() {
 
         database = Firebase.database.reference
 
-        //Muestra en el Logcat el email del usuario logeado
+        if(checkCurrentUser()){
+            updateUI(Firebase.auth.currentUser)
+        }else{
+            updateUI(null)
+        }
+
         Log.d("TAG", "Usuarioooooooooooooooooooo: " + Firebase.auth.currentUser?.email.toString())
 
         return root
@@ -55,84 +63,103 @@ class UsuarioFragment : Fragment() {
 
         with(binding) {
 
-            //Asigna al boton de inicio de sesion una funcion
             btnLogin.setOnClickListener {
-
-                //Recoge el contenido de los campos
                 val email = binding.etEmail.text.toString()
                 val password = binding.etContrasena.text.toString()
 
-                //Hace las validaciones
                 if(email.isEmpty()){
                     Toast.makeText(context, "Completa el correo", Toast.LENGTH_SHORT).show()
                 }else if(password.isEmpty()){
                     Toast.makeText(context, "Completa la contraseña", Toast.LENGTH_SHORT).show()
-
                 }else{
-                    //Si todo esta ok, se logea
                     signIn(email, password)
                 }
 
             }
 
-            //Asigna al boton de registrarse una funcion
             btnRegistro.setOnClickListener {
-
-                //Recoge el contenido de los campos
                 val email = binding.etEmail.text.toString()
                 val password = binding.etContrasena.text.toString()
-
-                //Hace las validaciones
-                if(email.isEmpty()){
-                    Toast.makeText(context, "Completa el correo", Toast.LENGTH_SHORT).show()
-                }else if(password.isEmpty()){
-                    Toast.makeText(context, "Completa la contraseña", Toast.LENGTH_SHORT).show()
-
+                val repPassword = binding.etRepPassword.text.toString()
+                if(email.contains('@') && !email.toString().substringAfter('@').contains('@')){
+                    if (email.contains('.') && !email.toString().substringAfter('.').contains('.')){
+                        if (email.contains("@gmail.com") && email.toString().substringAfter("@gmail.com").isEmpty()){
+                            if (password.length>5){
+                                if (password.equals(repPassword)){
+                                    register(email, password)
+                                }else{
+                                    Toast.makeText(context, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+                                }
+                            }else{
+                                Toast.makeText(context, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
+                            }
+                        }else{
+                            Toast.makeText(context, "El email debe terminar en '@gmail.com'", Toast.LENGTH_SHORT).show()
+                        }
+                    }else{
+                        Toast.makeText(context, "El email debe tener un '.'", Toast.LENGTH_SHORT).show()
+                    }
                 }else{
-                    //Si todo esta ok, se registra
-                    register(email, password)
+                    Toast.makeText(context, "El email debe tener una '@'", Toast.LENGTH_SHORT).show()
                 }
 
             }
 
-            //Asigna al boton de cerrar sesión su función
+            btnRegistro.visibility= View.GONE
+            etRepPassword.visibility= View.GONE
+
             btnLogOut.setOnClickListener {
                 signOut()
+
+                binding.etRepPassword.visibility = View.GONE
+                binding.btnRegistro.visibility = View.GONE
+
+                etEmail.setText("")
+                etContrasena.setText("")
+                etRepPassword.setText("")
+            }
+
+            btnCambiarVista.setOnClickListener {
+                if (btnLogin.isVisible){
+                    btnLogin.visibility = View.GONE
+                    btnRegistro.visibility = View.VISIBLE
+                    etRepPassword.visibility = View.VISIBLE
+                    btnCambiarVista.setText("Ir a login")
+                    etEmail.setText("")
+                    etContrasena.setText("")
+                }else{
+                    btnLogin.visibility = View.VISIBLE
+                    btnRegistro.visibility = View.GONE
+                    etRepPassword.visibility = View.GONE
+                    btnCambiarVista.setText("Ir a registro")
+                    etEmail.setText("")
+                    etContrasena.setText("")
+                    etRepPassword.setText("")
+                }
             }
 
         }
 
         // Initialize Firebase Auth
         auth = Firebase.auth
-
-        //Verifica que el usuario esté logeado y cambia la vista
-        if(Firebase.auth.currentUser != null){
-            updateUI(Firebase.auth.currentUser)
-        }else{
-            updateUI(null)
-        }
-
     }
 
-    //Obtiene la imagen de Firebase Storage
     private fun cargarImagen(nombreImagen: String){
 
-        //Obtiene el storage
         val storage = Firebase.storage
 
-        //Coge la referencia (URL)
         val storageRef = storage.reference
 
-        //Coge el imageView
         val imageView = binding.imageView2
 
         storageRef.child(nombreImagen).downloadUrl.addOnSuccessListener { uri ->
-            //Carga la imagen en el imageView
+            // Usa Glide (o cualquier otra biblioteca de carga de imágenes) para cargar la imagen en el ImageView
             Glide.with(this /* context */)
                 .load(uri)
                 .into(imageView)
         }.addOnFailureListener { exception ->
-            //Manejo de errores
+            // Manejar errores
+            // Por ejemplo, si la imagen no se puede descargar
             exception.printStackTrace()
         }
     }
@@ -165,16 +192,12 @@ class UsuarioFragment : Fragment() {
     }
 
 
-    //Inicia sesión
     fun signIn(email: String, password: String){
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
-
-                //Si todo bien, se actualiza la vista
                 if (task.isSuccessful) {
-
+                    // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
-
                     val user = auth.currentUser
 
                     Toast.makeText(
@@ -184,92 +207,74 @@ class UsuarioFragment : Fragment() {
                     ).show()
 
                     updateUI(user)
-
-                //Si algo sale mal, se le informa al usuario y se actualiza la vista por si acaso
                 } else {
-
+                    // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
-
                     Toast.makeText(
                         context,
                         "Authentication failed.",
                         Toast.LENGTH_SHORT,
                     ).show()
-
                     updateUI(null)
-
                 }
             }
     }
 
-    //Registra al usuario
     private fun register(email: String, password: String){
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
-
-                //Si todo bien, se actualiza la vista
                 if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
 
-                    Log.d(TAG, "createUserWithEmail:success")
-
+                    Toast.makeText(
+                        context,
+                        "Bienvenido " + auth.currentUser?.email.toString().substringBefore('@'),
+                        Toast.LENGTH_SHORT,
+                    ).show()
                     val user = auth.currentUser
-
-                    Toast.makeText(
-                        context,
-                        "Bienvenido " + user?.email.toString().substringBefore('@'),
-                        Toast.LENGTH_SHORT,
-                    ).show()
-
                     updateUI(user)
-
-                //Si algo sale mal, se le informa al usuario y se actualiza la vista por si acaso
                 } else {
-
+                    // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-
                     Toast.makeText(
                         context,
-                        "Authentication failed.",
+                        "Este correo ya ha sido registrado",
                         Toast.LENGTH_SHORT,
                     ).show()
-
                     updateUI(null)
-
                 }
             }
     }
 
-    //Actualiza la vista según el parametro
     private fun updateUI(user: FirebaseUser?) {
 
-        //Si el usuario esta logeado
         if(user != null){
-
-            //Se quitan los elementos de inicio de sesion
+            //Si el usuario esta logeado
             binding.etEmail.visibility = View.GONE
             binding.etContrasena.visibility = View.GONE
+
             binding.btnLogin.visibility = View.GONE
             binding.btnRegistro.visibility = View.GONE
+            binding.etRepPassword.visibility= View.GONE
+            binding.btnCambiarVista.visibility = View.GONE
 
-            //Aparecen los elementos de la sesión
             binding.btnLogOut.visibility = View.VISIBLE
             cargarImagen("cloud.jpg")
-            binding.imageView2.visibility = View.VISIBLE
             binding.txtCorreoUsuario.text = Firebase.auth.currentUser?.email.toString().substringBefore('@')
+            binding.imageView2.visibility = View.VISIBLE
             binding.txtCorreoUsuario.visibility = View.VISIBLE
-
-        //Si el usuario NO está logeado
         }else{
+            //Si el usuario NO está logeado
 
-            //Se ponen los elementos de inicio de sesion
             binding.etEmail.visibility = View.VISIBLE
             binding.etContrasena.visibility = View.VISIBLE
 
             binding.btnLogin.visibility = View.VISIBLE
             binding.btnRegistro.visibility = View.VISIBLE
+            binding.etRepPassword.visibility = View.VISIBLE
+            binding.btnCambiarVista.visibility = View.VISIBLE
 
-            //Se quitan los elementos de la sesión iniciada
             binding.btnLogOut.visibility = View.GONE
             binding.imageView2.visibility = View.GONE
             binding.txtCorreoUsuario.visibility = View.GONE
@@ -277,7 +282,6 @@ class UsuarioFragment : Fragment() {
 
     }
 
-    //Comprueba el usuario que este logeado
     private fun checkCurrentUser(): Boolean {
         // [START check_current_user]
         val user = Firebase.auth.currentUser
@@ -291,7 +295,6 @@ class UsuarioFragment : Fragment() {
         // [END check_current_user]
     }
 
-    //Cierra sesion
     private fun signOut() {
         // [START auth_sign_out]
         Firebase.auth.signOut()

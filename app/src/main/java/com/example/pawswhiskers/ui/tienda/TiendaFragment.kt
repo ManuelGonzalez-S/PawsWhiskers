@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.example.pawswhiskers.Repositorio.ListaCompra
 import com.example.pawswhiskers.Repositorio.ProductoRepositorio
 import com.example.pawswhiskers.databinding.FragmentTiendaBinding
 import com.google.firebase.Firebase
@@ -31,10 +33,6 @@ class TiendaFragment : Fragment() {
 
         _binding = FragmentTiendaBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        val imageView: ImageView = binding.imageView
-
-        Glide.with(this).load(com.example.pawswhiskers.R.drawable.cestacompra).into(imageView)
 
         return root
     }
@@ -116,18 +114,40 @@ class TiendaFragment : Fragment() {
                 layoutParams.topToBottom = previousItemId
             }
 
+            // Buscar el botón "Añadir a la cesta" en el diseño del producto
+            val btnAddToCart = itemView.findViewById<Button>(com.example.pawswhiskers.R.id.btnAddToCart)
+
+            // Configurar el OnClickListener para el botón
+            btnAddToCart.setOnClickListener {
+                // Añadir el producto a la cesta
+                ListaCompra.añadirProducto(producto)
+
+                comprobarListaCesta()
+            }
+
             // Agregar el elemento de lista a la listaTienda
             listaTienda.addView(itemView)
 
             // Actualizar el ID del elemento anterior
             previousItemId = itemView.id
-
         }
 
         val totalHeight = getTotalHeight(binding.listaTienda)
 
         // Establece la altura del ScrollView
         binding.scrollView.layoutParams.height = totalHeight
+
+    }
+
+    private fun comprobarListaCesta(){
+
+        var totalCesta = ListaCompra.obtenerProductos().size
+
+        if(totalCesta == 0){
+
+
+
+        }
 
     }
 

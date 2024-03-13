@@ -10,6 +10,8 @@ class ListaCompra {
 
         fun añadirProducto(producto: Producto) {
             ListaCompra.listaProductos.add(producto)
+
+            mostrarProductos()
         }
 
         // Elimina un producto de la lista
@@ -31,7 +33,7 @@ class ListaCompra {
             if (ListaCompra.listaProductos.isEmpty()) {
                 println("No hay productos en el repositorio.")
             } else {
-                println("Productos en el repositorio:")
+                println("\nProductos en el repositorio:")
                 for ((index, producto) in ListaCompra.listaProductos.withIndex()) {
                     println("Producto ${index + 1}:")
                     println("Nombre: ${producto.nombre}")

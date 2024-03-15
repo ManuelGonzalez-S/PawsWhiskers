@@ -107,6 +107,9 @@ class UsuarioFragment : Fragment() {
 
             btnRegistro.visibility= View.GONE
             etRepPassword.visibility= View.GONE
+            btnActualizar.visibility= View.GONE
+            etActualizarPassword.visibility= View.GONE
+            etActualizarCorreo.visibility= View.GONE
 
             btnLogOut.setOnClickListener {
                 signOut()
@@ -138,6 +141,40 @@ class UsuarioFragment : Fragment() {
                 }
             }
 
+            btnActualizarDatos.setOnClickListener {
+                btnActualizarDatos.visibility = View.GONE
+                btnActualizar.visibility = View.VISIBLE
+                etActualizarCorreo.visibility = View.VISIBLE
+                etActualizarPassword.visibility = View.VISIBLE
+                btnLogOut.visibility = View.GONE
+            }
+
+            btnActualizar.setOnClickListener {
+                val email = binding.etActualizarCorreo.text.toString()
+                val password = binding.etActualizarPassword.text.toString()
+                if(email.contains('@') && !email.toString().substringAfter('@').contains('@')){
+                    if (email.contains('.') && !email.toString().substringAfter('.').contains('.')){
+                        if (email.contains("@gmail.com") && email.toString().substringAfter("@gmail.com").isEmpty()){
+                            if (password.length>5){
+                                updateEmail()
+                                updatePassword()
+                                Toast.makeText(context, "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
+                                updateUI(Firebase.auth.currentUser)
+                            }else{
+                                Toast.makeText(context, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
+                            }
+                        }else{
+                            Toast.makeText(context, "El email debe terminar en '@gmail.com'", Toast.LENGTH_SHORT).show()
+                        }
+                    }else{
+                        Toast.makeText(context, "El email debe tener un '.'", Toast.LENGTH_SHORT).show()
+                    }
+                }else{
+                    Toast.makeText(context, "El email debe tener una '@'", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
         }
 
         // Initialize Firebase Auth
@@ -162,33 +199,6 @@ class UsuarioFragment : Fragment() {
             // Por ejemplo, si la imagen no se puede descargar
             exception.printStackTrace()
         }
-    }
-
-
-    private fun writeProduct(nombreProducto: String, nombreFoto: String, nombrePrecio: String) {
-
-        // Creamos un nuevo nodo "productos" y obtenemos una referencia a él
-        val productsRef = database.child("Relaciones").child("Productos")
-
-        // Creamos un nuevo nodo hijo bajo "productos" con un ID único generado automáticamente por Firebase
-        val newProductRef = productsRef.push()
-
-        // Creamos un mapa para almacenar los datos del producto
-        val productMap = HashMap<String, Any>()
-        productMap["Nombre"] = nombreProducto
-        productMap["Foto"] = nombreFoto
-        productMap["Precio"] = nombrePrecio
-
-        // Escribimos los datos del producto en la base de datos
-        newProductRef.setValue(productMap)
-            .addOnSuccessListener {
-                // Manejamos el éxito, si es necesario
-            }
-            .addOnFailureListener { e ->
-                // Manejamos el fallo
-                // Por ejemplo, si la escritura en la base de datos falla
-                e.printStackTrace()
-            }
     }
 
 
@@ -264,6 +274,12 @@ class UsuarioFragment : Fragment() {
             binding.txtCorreoUsuario.text = Firebase.auth.currentUser?.email.toString().substringBefore('@')
             binding.imageView2.visibility = View.VISIBLE
             binding.txtCorreoUsuario.visibility = View.VISIBLE
+            binding.btnActualizarDatos.visibility = View.VISIBLE
+            binding.btnActualizar.visibility = View.GONE
+            binding.etActualizarPassword.setText("")
+            binding.etActualizarCorreo.setText("")
+            binding.etActualizarCorreo.visibility = View.GONE
+            binding.etActualizarPassword.visibility = View.GONE
         }else{
             //Si el usuario NO está logeado
 
@@ -278,6 +294,7 @@ class UsuarioFragment : Fragment() {
             binding.btnLogOut.visibility = View.GONE
             binding.imageView2.visibility = View.GONE
             binding.txtCorreoUsuario.visibility = View.GONE
+            binding.btnActualizarDatos.visibility = View.GONE
         }
 
     }
@@ -300,6 +317,34 @@ class UsuarioFragment : Fragment() {
         Firebase.auth.signOut()
         // [END auth_sign_out]
         updateUI(null)
+    }
+
+    private fun updateEmail() {
+        // [START update_email]
+        val user = Firebase.auth.currentUser
+        user?.updateEmail(binding.etActualizarCorreo.text.toString())
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User email address updated successfully.")
+                } else {
+                    Log.w(TAG, "Failed to update user email address.", task.exception)
+                }
+            }
+        // [END update_email]
+    }
+
+    private fun updatePassword() {
+        // [START update_password]
+        val user = Firebase.auth.currentUser
+        user!!.updatePassword(binding.etActualizarPassword.text.toString())
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User password updated.")
+                }else{
+                    Log.d(TAG, "ERROR User password NOT updated.")
+                }
+            }
+        // [END update_password]
     }
 
 }
